@@ -1,0 +1,31 @@
+# Test Users for HRMS SaaS Keycloak
+# Generated: Thu Oct 30 12:31:06 IST 2025
+
+Company Information:
+  Company UUID: 550e8400-e29b-41d4-a716-446655440000
+  Company Code: TEST001
+  Company Name: Test Company Ltd
+
+Test User 1 - Company Admin:
+  Username: admin@testcompany.com
+  Password: TestAdmin@123
+  Email: admin@testcompany.com
+  Role: company_admin
+  Company ID: 550e8400-e29b-41d4-a716-446655440000
+
+Test User 2 - Regular Employee:
+  Username: john.doe@testcompany.com
+  Password: TestUser@123
+  Email: john.doe@testcompany.com
+  Role: employee
+  Company ID: 550e8400-e29b-41d4-a716-446655440000
+  Employee ID: 660e8400-e29b-41d4-a716-446655440001
+
+Login Test Command:
+curl -X POST "http://localhost:8090/realms/hrms-saas/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=hrms-web-app" \
+  -d "client_secret=AhuaZRTwH4wsXHFrmMEciDjo1Kc8aS0M" \
+  -d "username=john.doe@testcompany.com" \
+  -d "password=TestUser@123"

@@ -1,0 +1,66 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Spring Boot
+springboot/target/
+springboot/*.jar
+springboot/*.war
+springboot/*.log
+springboot/.mvn/
+springboot/mvnw
+springboot/mvnw.cmd
+
+# React
+reactapp/node_modules/
+reactapp/build/
+reactapp/dist/
+reactapp/.env.local
+reactapp/.env.development.local
+reactapp/.env.test.local
+reactapp/.env.production.local
+reactapp/npm-debug.log*
+reactapp/yarn-debug.log*
+reactapp/yarn-error.log*
+
+# PostgreSQL
+postgres/data/
+postgres/*.log
+
+# Keycloak
+keycloak/data/
+keycloak/*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Sensitive data
+secrets/
+credentials/
+*.key
+*.pem
+*.p12
+*.jks
