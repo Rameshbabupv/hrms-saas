@@ -37,10 +37,11 @@ class SignUpService {
    *
    * Backend process:
    * 1. Validate email uniqueness
-   * 2. Create company_master record with unique tenant_id
-   * 3. Create Keycloak user with company_id attribute
-   * 4. Send email verification
-   * 5. Return response with company_id
+   * 2. Generate 12-char NanoID for tenant_id
+   * 3. Create company_master record with tenant_id
+   * 4. Create Keycloak user with tenant_id attribute
+   * 5. Send email verification
+   * 6. Return response with tenantId and userId
    *
    * SECURITY: Backend extracts tenant_id from JWT for RLS
    * Client never provides tenant_id
@@ -60,10 +61,15 @@ class SignUpService {
       );
 
       console.log('✅ Customer account created successfully:', {
-        companyId: response.data.companyId,
+        tenantId: response.data.tenantId,
         userId: response.data.userId,
         requiresEmailVerification: response.data.requiresEmailVerification,
       });
+
+      // Store tenantId in localStorage for future reference
+      if (response.data.tenantId) {
+        localStorage.setItem('tenantId', response.data.tenantId);
+      }
 
       return response.data;
     } catch (error: any) {
@@ -81,7 +87,16 @@ class SignUpService {
       }
 
       if (error.response?.status === 400) {
+        // Check if it's a validation error with field details
+        if (error.response?.data?.fields) {
+          const fieldErrors = Object.values(error.response.data.fields).join(', ');
+          throw new Error(fieldErrors);
+        }
         throw new Error(errorMessage);
+      }
+
+      if (error.response?.status === 503) {
+        throw new Error('Service temporarily unavailable. Please try again later.');
       }
 
       throw new Error(errorMessage);

@@ -20,9 +20,8 @@ export interface SignUpRequest {
 export interface SignUpResponse {
   success: boolean;
   message: string;
-  companyId?: string;
-  userId?: string;
-  email?: string;
+  tenantId: string | null;  // 12-char NanoID (e.g., a1lrqfv7lj7h)
+  userId: string | null;    // UUID from Keycloak
   requiresEmailVerification: boolean;
 }
 

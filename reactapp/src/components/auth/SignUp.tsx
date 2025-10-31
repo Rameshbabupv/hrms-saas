@@ -113,7 +113,7 @@ export const SignUp: React.FC = () => {
         navigate('/email-verification', {
           state: {
             email: formData.email,
-            companyId: response.companyId,
+            tenantId: response.tenantId,
             userId: response.userId
           }
         });

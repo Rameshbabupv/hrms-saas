@@ -8,6 +8,8 @@ This folder contains comprehensive documentation for implementing the HRMS SaaS 
 
 ## 📖 Documentation Files
 
+### **Setup & Configuration**
+
 ### **1. [SPRINGBOOT_QUICK_START.md](./SPRINGBOOT_QUICK_START.md)** ⭐ START HERE
 **5-minute quick start guide**
 - Prerequisites and setup
@@ -20,7 +22,34 @@ This folder contains comprehensive documentation for implementing the HRMS SaaS 
 
 ---
 
-### **2. [SPRINGBOOT_ARCHITECTURE.md](./SPRINGBOOT_ARCHITECTURE.md)**
+### **2. [EMAIL_SETUP_CHECKLIST.md](./EMAIL_SETUP_CHECKLIST.md)** 📧 REQUIRED FOR EMAIL
+**5-minute email setup guide**
+- Gmail App Password generation
+- Keycloak SMTP configuration
+- Test email verification
+- Common issues and solutions
+
+**Best for:** Quick email verification setup
+
+---
+
+### **3. [EMAIL_SETUP_GUIDE.md](./EMAIL_SETUP_GUIDE.md)** 📧 DETAILED EMAIL GUIDE
+**Complete email configuration documentation**
+- Gmail, SendGrid, Mailgun, AWS SES setup
+- Production considerations
+- Email templates customization
+- Troubleshooting guide
+- Security best practices
+
+**Best for:** Production email setup and troubleshooting
+
+---
+
+### **Architecture & Design**
+
+---
+
+### **4. [SPRINGBOOT_ARCHITECTURE.md](./SPRINGBOOT_ARCHITECTURE.md)**
 **System architecture and design**
 - High-level architecture diagrams
 - Multi-tenant design with NanoID
