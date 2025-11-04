@@ -18,16 +18,17 @@ This directory contains the complete PostgreSQL database setup for the HRMS SaaS
 ### For New Users
 1. **[README.md](README.md)** - Start here! Main documentation with everything you need
 2. **[SCRIPTS_GUIDE.md](SCRIPTS_GUIDE.md)** - Detailed guide for all CLI scripts
-3. **[DATABASE_SETUP_STATUS.md](docs/DATABASE_SETUP_STATUS.md)** - Current setup status and known issues
+3. **[DATABASE_SETUP_STATUS.md](postgres-docs/DATABASE_SETUP_STATUS.md)** - Current setup status and known issues
 
 ### For Developers
-1. **[SPRINGBOOT_NOTES.md](docs/SPRINGBOOT_NOTES.md)** - Backend integration guide
-2. **[REACTAPP_NOTES.md](docs/REACTAPP_NOTES.md)** - Frontend integration guide
-3. **[KEYCLOAK_IMPLEMENTATION_GUIDE.md](docs/KEYCLOAK_IMPLEMENTATION_GUIDE.md)** - Authentication setup
+1. **[SPRINGBOOT_NOTES.md](../docs/SPRINGBOOT_NOTES.md)** - Backend integration guide
+2. **[REACTAPP_NOTES.md](../docs/REACTAPP_NOTES.md)** - Frontend integration guide
+3. **Schema Reference** - See [postgres-docs/schemas](postgres-docs/schemas/)
 
 ### For DBAs
-1. **[CLAUDE.md](docs/CLAUDE.md)** - DBA role and responsibilities
-2. **[DBA_NOTES.md](docs/DBA_NOTES.md)** - Complete DBA guide with best practices
+1. **[DBA_NOTES.md](postgres-docs/DBA_NOTES.md)** - Complete DBA guide with best practices
+2. **[DATABASE_SETUP_STATUS.md](postgres-docs/DATABASE_SETUP_STATUS.md)** - Current status and issues
+3. **[postgres-docs/README.md](postgres-docs/README.md)** - Database documentation index
 
 ---
 
@@ -48,19 +49,14 @@ postgres/
 │   ├── view-companies.sh             # ⭐ View company data
 │   └── view-employees.sh             # ⭐ View employee data
 │
-├── docs/                              # Documentation
-│   ├── CLAUDE.md                     # DBA role document
-│   ├── DATABASE_SETUP_STATUS.md      # Setup completion status
+├── postgres-docs/                     # Database documentation ⭐ NEW
+│   ├── README.md                     # Documentation guide
 │   ├── DBA_NOTES.md                  # Complete DBA guide
-│   ├── KEYCLOAK_IMPLEMENTATION_GUIDE.md  # Keycloak setup
-│   ├── KEYCLOAK_NOTES.md             # Keycloak quick reference
-│   ├── NEXUS_INSIGHT_MVP.md          # Admin portal design
-│   ├── REACTAPP_NOTES.md             # Frontend guide
-│   ├── SPRINGBOOT_NOTES.md           # Backend guide
-│   ├── SETUP_COMPLETE_README.md      # Keycloak setup status
-│   ├── saas_mvp_audit_schema.sql     # Audit schema SQL
-│   ├── saas_mvp_schema_v1.sql        # V1 schema (deprecated)
-│   └── saas_mvp_schema_v2_with_hierarchy.sql  # V2 schema (current)
+│   ├── DATABASE_SETUP_STATUS.md      # Setup completion status
+│   └── schemas/                      # Database schemas
+│       ├── saas_mvp_schema_v1.sql    # V1 schema (deprecated)
+│       ├── saas_mvp_schema_v2_with_hierarchy.sql  # V2 schema (current)
+│       └── saas_mvp_audit_schema.sql # Audit schema SQL
 │
 └── scripts/                           # SQL scripts
     ├── 01_create_employee_table.sql  # Employee table creation
@@ -121,11 +117,11 @@ postgres/
 
 ### I am a DBA
 **Read these in order:**
-1. [CLAUDE.md](docs/CLAUDE.md) - Your role and responsibilities
-2. [DBA_NOTES.md](docs/DBA_NOTES.md) - Complete DBA guide
-3. [DATABASE_SETUP_STATUS.md](docs/DATABASE_SETUP_STATUS.md) - Current status
-4. [README.md](README.md) - Main documentation
-5. [SCRIPTS_GUIDE.md](SCRIPTS_GUIDE.md) - Management scripts
+1. [DBA_NOTES.md](postgres-docs/DBA_NOTES.md) - Complete DBA guide ⭐ START HERE
+2. [DATABASE_SETUP_STATUS.md](postgres-docs/DATABASE_SETUP_STATUS.md) - Current status
+3. [README.md](README.md) - Main documentation
+4. [SCRIPTS_GUIDE.md](SCRIPTS_GUIDE.md) - Management scripts
+5. [postgres-docs/README.md](postgres-docs/README.md) - Database docs index
 
 **Key responsibilities:**
 - Database maintenance and monitoring
@@ -136,9 +132,9 @@ postgres/
 
 ### I am a Backend Developer (Spring Boot)
 **Read these in order:**
-1. [SPRINGBOOT_NOTES.md](docs/SPRINGBOOT_NOTES.md) - Backend integration guide
+1. [SPRINGBOOT_NOTES.md](../docs/SPRINGBOOT_NOTES.md) - Backend integration guide
 2. [README.md](README.md) - Database schema and connection info
-3. [KEYCLOAK_IMPLEMENTATION_GUIDE.md](docs/KEYCLOAK_IMPLEMENTATION_GUIDE.md) - Authentication
+3. [Database Schemas](postgres-docs/schemas/) - Schema definitions
 
 **Key tasks:**
 - Integrate with PostgreSQL using Spring Data JPA
@@ -149,9 +145,9 @@ postgres/
 
 ### I am a Frontend Developer (React)
 **Read these in order:**
-1. [REACTAPP_NOTES.md](docs/REACTAPP_NOTES.md) - Frontend integration guide
-2. [KEYCLOAK_IMPLEMENTATION_GUIDE.md](docs/KEYCLOAK_IMPLEMENTATION_GUIDE.md) - Authentication
-3. [README.md](README.md) - API structure and data models
+1. [REACTAPP_NOTES.md](../docs/REACTAPP_NOTES.md) - Frontend integration guide
+2. [README.md](README.md) - API structure and data models
+3. [Database Schemas](postgres-docs/schemas/) - Data model reference
 
 **Key tasks:**
 - Integrate Keycloak authentication
@@ -163,7 +159,7 @@ postgres/
 ### I am a DevOps Engineer
 **Read these in order:**
 1. [README.md](README.md) - Main documentation
-2. [DBA_NOTES.md](docs/DBA_NOTES.md) - Deployment and maintenance
+2. [DBA_NOTES.md](postgres-docs/DBA_NOTES.md) - Deployment and maintenance
 3. [SCRIPTS_GUIDE.md](SCRIPTS_GUIDE.md) - Automation scripts
 
 **Key tasks:**
@@ -176,8 +172,8 @@ postgres/
 ### I am a Project Manager
 **Read these:**
 1. [README.md](README.md) - Overview and features
-2. [DATABASE_SETUP_STATUS.md](docs/DATABASE_SETUP_STATUS.md) - Current status
-3. [NEXUS_INSIGHT_MVP.md](docs/NEXUS_INSIGHT_MVP.md) - Admin portal design
+2. [DATABASE_SETUP_STATUS.md](postgres-docs/DATABASE_SETUP_STATUS.md) - Current status
+3. [NEXUS_INSIGHT_MVP.md](../docs/NEXUS_INSIGHT_MVP.md) - Admin portal design
 
 **Quick facts:**
 - ✅ Database is production-ready

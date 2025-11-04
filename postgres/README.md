@@ -461,6 +461,8 @@ SELECT * FROM employee WHERE company_id = 'some-uuid';
 ```
 postgres/
 ├── README.md                          # This file
+├── INDEX.md                           # Documentation index
+├── SCRIPTS_GUIDE.md                   # Scripts usage guide
 ├── bin/                               # Management scripts
 │   ├── db-start.sh                   # Start database
 │   ├── db-stop.sh                    # Stop database
@@ -469,12 +471,14 @@ postgres/
 │   ├── db-connect.sh                 # Connect to DB
 │   ├── view-companies.sh             # View company data
 │   └── view-employees.sh             # View employee data
-├── docs/                              # Documentation
-│   ├── CLAUDE.md                     # DBA role & responsibilities
-│   ├── DATABASE_SETUP_STATUS.md      # Setup completion status
+├── postgres-docs/                     # Database documentation
+│   ├── README.md                     # Documentation guide
 │   ├── DBA_NOTES.md                  # Complete DBA guide
-│   ├── saas_mvp_schema_v2_with_hierarchy.sql
-│   └── saas_mvp_audit_schema.sql
+│   ├── DATABASE_SETUP_STATUS.md      # Setup completion status
+│   └── schemas/                      # Database schemas
+│       ├── saas_mvp_schema_v1.sql    # Initial schema
+│       ├── saas_mvp_schema_v2_with_hierarchy.sql  # Current schema (v2)
+│       └── saas_mvp_audit_schema.sql # Audit tables
 └── scripts/                           # SQL scripts
     ├── 01_create_employee_table.sql
     ├── 02_sample_data.sql
@@ -497,8 +501,9 @@ postgres/
 ## 📞 Support
 
 **DBA:** Claude (AI Assistant)
-**Documentation:** See `/docs` directory
-**Issues:** Document in `docs/DATABASE_SETUP_STATUS.md`
+**Documentation:** See `/postgres-docs` directory
+**Issues:** Document in `postgres-docs/DATABASE_SETUP_STATUS.md`
+**Complete Guide:** See `postgres-docs/DBA_NOTES.md`
 
 ---
 
