@@ -13,6 +13,13 @@
 .classpath
 .settings/
 
+# AI Assistant Cache
+.serena/
+.claude/cache/
+
+# Documentation (external)
+hrms-saas-docs/
+
 # Spring Boot
 springboot/target/
 springboot/*.jar

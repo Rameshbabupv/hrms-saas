@@ -1,0 +1,119 @@
+spring:
+  application:
+    name: hrms-saas-backend
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hrms_saas
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Use Flyway for migrations, don't auto-create schema
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  # Flyway Configuration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    schemas: public
+    validate-on-migrate: true
+
+  # Security Configuration (OAuth2 Resource Server)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/hrms-saas
+          jwk-set-uri: http://localhost:8090/realms/hrms-saas/protocol/openid-connect/certs
+
+  # GraphQL Configuration
+  graphql:
+    graphiql:
+      enabled: true
+      path: /graphiql
+    path: /graphql
+    schema:
+      printer:
+        enabled: true
+
+# Server Configuration
+server:
+  port: 8081
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.systech.hrms: DEBUG
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.flywaydb: INFO
+
+# Keycloak Configuration
+keycloak:
+  server-url: http://localhost:8090
+  realm: hrms-saas
+  admin:
+    username: admin
+    password: secret
+    client-id: admin-cli
+  client:
+    id: hrms-web-app
+    secret: AhuaZRTwH4wsXHFrmMEciDjo1Kc8aS0M
+
+# NanoID Configuration
+nanoid:
+  size: 12
+  alphabet: "0123456789abcdefghijklmnopqrstuvwxyz"
+
+# CORS Configuration
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:3001
+    - http://192.168.1.6:3000
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+  allowed-headers:
+    - "*"
+  exposed-headers:
+    - Authorization
+    - Content-Type
+  allow-credentials: true
+  max-age: 3600
+
+# Application Specific Configuration
+app:
+  name: HRMS SaaS
+  version: 1.0.0
+  description: Multi-tenant HRMS SaaS platform
