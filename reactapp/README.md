@@ -437,9 +437,70 @@ const users = await keycloakAdminService.getUsersByCompanyId(companyId);
 - [`docs/DBA_NOTES.md`](../docs/DBA_NOTES.md) - Database RLS configuration
 - [`docs/REACTAPP_NOTES.md`](../docs/REACTAPP_NOTES.md) - React development guide
 
+## 🌿 Git Flow Workflow
+
+This project follows **Git Flow** branching strategy for organized development and releases.
+
+### Branch Structure
+
+- **`main`** - Production-ready code (protected)
+- **`develop`** - Integration branch for features (protected)
+- **`feature/*`** - New features and enhancements
+- **`release/*`** - Release preparation branches
+- **`hotfix/*`** - Production bug fixes
+
+### Quick Commands
+
+```bash
+# Start a new feature
+./scripts/git-flow-feature.sh start employee-management
+
+# Finish a feature (after PR merged)
+./scripts/git-flow-feature.sh finish employee-management
+
+# Start a release
+./scripts/git-flow-release.sh start 1.2.0
+
+# Finish a release
+./scripts/git-flow-release.sh finish 1.2.0
+
+# Start a hotfix
+./scripts/git-flow-hotfix.sh start 1.0.1
+
+# Finish a hotfix
+./scripts/git-flow-hotfix.sh finish 1.0.1
+```
+
+### Documentation
+
+- **[`GIT_FLOW_GUIDE.md`](./GIT_FLOW_GUIDE.md)** - Complete Git Flow guide with workflows and examples
+- **[`scripts/README.md`](./scripts/README.md)** - Helper scripts documentation
+
+### Commit Message Convention
+
+We follow **Conventional Commits**:
+
+```bash
+feat: add employee search functionality
+fix: resolve password validation error
+docs: update API documentation
+refactor: simplify authentication logic
+test: add unit tests for password validator
+chore: upgrade dependencies
+```
+
 ## 🤝 Contributing
 
 This is an internal project. For questions or issues, contact the development team.
+
+### Development Workflow
+
+1. Create feature branch: `./scripts/git-flow-feature.sh start your-feature`
+2. Make changes and commit with conventional messages
+3. Push and create Pull Request
+4. After PR approval and merge: `./scripts/git-flow-feature.sh finish your-feature`
+
+See [`GIT_FLOW_GUIDE.md`](./GIT_FLOW_GUIDE.md) for detailed guidelines.
 
 ## 📄 License
 
