@@ -81,6 +81,15 @@ public class CompanyMaster {
     private String address;
 
     /**
+     * Email Domain (extracted from email)
+     * Example: systech.com, gmail.com
+     * Foreign key to domain_master table
+     */
+    @Column(name = "domain", length = 255, nullable = false)
+    @NotBlank(message = "Domain is required")
+    private String domain;
+
+    /**
      * Account Status
      * Values: PENDING_ACTIVATION, PENDING_EMAIL_VERIFICATION, ACTIVE, SUSPENDED, INACTIVE
      */

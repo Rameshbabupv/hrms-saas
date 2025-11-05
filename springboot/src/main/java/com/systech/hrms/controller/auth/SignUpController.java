@@ -5,6 +5,7 @@ import com.systech.hrms.dto.auth.SignUpResponse;
 import com.systech.hrms.exception.EmailAlreadyExistsException;
 import com.systech.hrms.exception.KeycloakIntegrationException;
 import com.systech.hrms.service.SignUpService;
+import com.systech.hrms.service.DomainValidationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import java.util.Map;
 public class SignUpController {
 
     private final SignUpService signUpService;
+    private final DomainValidationService domainValidationService;
 
     /**
      * Create new customer account
@@ -115,5 +117,26 @@ public class SignUpController {
     ) {
         boolean available = !signUpService.emailExists(email);
         return ResponseEntity.ok(Map.of("available", available));
+    }
+
+    /**
+     * Check domain availability
+     * GET /api/v1/auth/check-domain?domain=systech.com
+     *
+     * @param domain domain to check
+     * @return availability and public status
+     */
+    @GetMapping("/check-domain")
+    public ResponseEntity<Map<String, Object>> checkDomainAvailability(
+        @RequestParam String domain
+    ) {
+        boolean available = domainValidationService.isDomainAvailableForRegistration(domain);
+        boolean isPublic = domainValidationService.isPublicDomain(domain);
+
+        return ResponseEntity.ok(Map.of(
+            "available", available,
+            "isPublic", isPublic,
+            "domain", domain.toLowerCase()
+        ));
     }
 }

@@ -38,6 +38,7 @@ public class SignUpService {
     private final CompanyRepository companyRepository;
     private final KeycloakAdminService keycloakAdminService;
     private final NanoIdGenerator nanoIdGenerator;
+    private final DomainValidationService domainValidationService;
 
     /**
      * Create new customer account
@@ -76,15 +77,29 @@ public class SignUpService {
             );
         }
 
-        // Step 2: Generate unique NanoID for tenant_id
+        // Step 2: Extract and validate domain
+        String domain = domainValidationService.extractDomainFromEmail(request.getEmail());
+        log.info("Extracted domain: {}", domain);
+
+        // Step 2.1: Check if domain is available
+        if (!domainValidationService.isDomainAvailableForRegistration(domain)) {
+            log.warn("Domain {} is already registered", domain);
+            throw new IllegalArgumentException("Domain " + domain + " is already registered to another company");
+        }
+
+        // Step 3: Generate unique NanoID for tenant_id
         String tenantId = generateUniqueTenantId();
         log.info("Generated tenant_id: {}", tenantId);
 
-        // Step 3: Create company_master record
-        CompanyMaster company = createCompany(tenantId, request);
+        // Step 4: Register and lock domain to tenant
+        domainValidationService.validateAndRegisterDomain(domain, tenantId);
+        log.info("Domain {} registered to tenant {}", domain, tenantId);
+
+        // Step 5: Create company_master record
+        CompanyMaster company = createCompany(tenantId, domain, request);
         log.info("Company created: {} with tenant_id: {}", company.getCompanyName(), tenantId);
 
-        // Step 4: Create Keycloak user with tenant_id attribute
+        // Step 6: Create Keycloak user with tenant_id attribute
         String keycloakUserId;
         try {
             keycloakUserId = createKeycloakUser(tenantId, company, request);
@@ -97,7 +112,7 @@ public class SignUpService {
             throw new KeycloakIntegrationException("Failed to create Keycloak user", e);
         }
 
-        // Step 5: Send verification email (Keycloak handles this)
+        // Step 7: Send verification email (Keycloak handles this)
         try {
             keycloakAdminService.sendVerifyEmail(keycloakUserId);
             log.info("Verification email sent to: {}", request.getEmail());
@@ -106,7 +121,7 @@ public class SignUpService {
             // Don't fail - user can request resend later
         }
 
-        // Step 6: Update company status
+        // Step 8: Update company status
         company.setStatus("PENDING_EMAIL_VERIFICATION");
         companyRepository.save(company);
 
@@ -132,11 +147,12 @@ public class SignUpService {
     /**
      * Create company_master record
      */
-    private CompanyMaster createCompany(String tenantId, SignUpRequest request) {
+    private CompanyMaster createCompany(String tenantId, String domain, SignUpRequest request) {
         CompanyMaster company = CompanyMaster.builder()
             .tenantId(tenantId)
             .companyName(request.getCompanyName())
             .email(request.getEmail())
+            .domain(domain)
             .phone(request.getPhone())
             .status("PENDING_ACTIVATION")
             .subscriptionPlan("FREE")

@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/auth/verify-email").permitAll()
                 .requestMatchers("/api/v1/auth/resend-verification").permitAll()
                 .requestMatchers("/api/v1/auth/check-email").permitAll()
+                .requestMatchers("/api/v1/auth/check-domain").permitAll()
 
                 // GraphiQL - for development only
                 .requestMatchers("/graphiql/**").permitAll()
