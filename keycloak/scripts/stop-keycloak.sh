@@ -1,11 +1,13 @@
 #!/bin/bash
 
 ################################################################################
-# Stop Keycloak Container
+# Stop Keycloak Container (and optionally PostgreSQL)
 #
-# This script stops the Keycloak Podman container
+# This script stops the Keycloak Podman container and optionally PostgreSQL
 #
-# Usage: ./stop-keycloak.sh
+# Usage:
+#   ./stop-keycloak.sh           # Stop only Keycloak
+#   ./stop-keycloak.sh --with-db # Stop both Keycloak and PostgreSQL
 ################################################################################
 
 set -e
@@ -33,13 +35,27 @@ print_warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1"
 }
 
+# Parse arguments
+STOP_DB=false
+if [ "$1" == "--with-db" ] || [ "$1" == "--with-postgres" ]; then
+    STOP_DB=true
+fi
+
 echo ""
-echo "=================================="
-echo "  Stopping Keycloak Service"
-echo "=================================="
+if [ "$STOP_DB" = true ]; then
+    echo "=============================================="
+    echo "  Stopping Keycloak and PostgreSQL Services"
+    echo "=============================================="
+else
+    echo "=================================="
+    echo "  Stopping Keycloak Service"
+    echo "=================================="
+fi
 echo ""
 
-# Check if container is running
+# ======================================
+# Step 1: Stop Keycloak
+# ======================================
 print_info "Checking Keycloak container status..."
 CONTAINER_RUNNING=$(podman ps --filter name=nexus-keycloak-dev --format "{{.Names}}" | wc -l)
 
@@ -51,17 +67,45 @@ else
     print_success "Keycloak container stopped"
 fi
 
+# ======================================
+# Step 2: Optionally stop PostgreSQL
+# ======================================
+if [ "$STOP_DB" = true ]; then
+    print_info "Checking PostgreSQL container status..."
+    POSTGRES_RUNNING=$(podman ps --filter name=nexus-postgres-dev --format "{{.Names}}" | wc -l)
+
+    if [ "$POSTGRES_RUNNING" -eq 0 ]; then
+        print_warning "PostgreSQL container is not running"
+    else
+        print_info "Stopping PostgreSQL container..."
+        podman stop nexus-postgres-dev
+        print_success "PostgreSQL container stopped"
+    fi
+fi
+
+# Display status
 echo ""
 echo "=================================="
-echo "  Keycloak Status"
+echo "  Services Status"
 echo "=================================="
 echo ""
 
+print_info "PostgreSQL Status:"
+podman ps -a --filter name=nexus-postgres-dev --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+echo ""
+print_info "Keycloak Status:"
 podman ps -a --filter name=nexus-keycloak-dev --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 echo ""
-print_success "Keycloak has been stopped"
+if [ "$STOP_DB" = true ]; then
+    print_success "Both Keycloak and PostgreSQL have been stopped"
+else
+    print_success "Keycloak has been stopped (PostgreSQL is still running)"
+fi
 echo ""
-echo "To start Keycloak: ./start-keycloak.sh"
-echo "To check status: ./status-keycloak.sh"
+echo "Management:"
+echo "  • Start: ./start-keycloak.sh"
+echo "  • Restart: ./restart-keycloak.sh [--with-db]"
+echo "  • Status: ./status-keycloak.sh"
 echo ""

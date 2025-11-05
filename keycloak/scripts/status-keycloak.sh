@@ -32,9 +32,9 @@ print_warning() {
 }
 
 echo ""
-echo "=========================================="
-echo "  Keycloak Service Status"
-echo "=========================================="
+echo "================================================="
+echo "  Keycloak & PostgreSQL Service Status"
+echo "================================================="
 echo ""
 
 # Check Podman Machine
@@ -52,7 +52,42 @@ fi
 
 echo ""
 
-# Check Container Status
+# Check PostgreSQL Status
+print_header "PostgreSQL Container Status:"
+POSTGRES_RUNNING=$(podman ps --filter name=nexus-postgres-dev --format "{{.Names}}" | wc -l)
+
+if [ "$POSTGRES_RUNNING" -gt 0 ]; then
+    print_success "PostgreSQL container is running"
+
+    echo ""
+    podman ps --filter name=nexus-postgres-dev --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+    # Check PostgreSQL readiness
+    if podman exec nexus-postgres-dev pg_isready -U postgres >/dev/null 2>&1; then
+        print_success "PostgreSQL is accepting connections"
+    else
+        print_warning "PostgreSQL is running but not yet ready"
+    fi
+else
+    print_warning "PostgreSQL container is not running"
+
+    # Check if container exists
+    POSTGRES_EXISTS=$(podman ps -a --filter name=nexus-postgres-dev --format "{{.Names}}" | wc -l)
+
+    if [ "$POSTGRES_EXISTS" -gt 0 ]; then
+        echo ""
+        podman ps -a --filter name=nexus-postgres-dev --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+        echo ""
+        print_warning "Keycloak requires PostgreSQL to be running!"
+        echo "To start: ./start-keycloak.sh (will start both services)"
+    else
+        print_error "PostgreSQL container does not exist"
+    fi
+fi
+
+echo ""
+
+# Check Keycloak Container Status
 print_header "Keycloak Container Status:"
 CONTAINER_RUNNING=$(podman ps --filter name=nexus-keycloak-dev --format "{{.Names}}" | wc -l)
 
@@ -122,9 +157,12 @@ echo ""
 
 # Display Management Scripts
 print_header "Management Scripts:"
-echo "  • Start: ./start-keycloak.sh"
-echo "  • Stop: ./stop-keycloak.sh"
+echo "  • Start: ./start-keycloak.sh (starts both PostgreSQL and Keycloak)"
+echo "  • Stop: ./stop-keycloak.sh [--with-db]"
+echo "  • Restart: ./restart-keycloak.sh [--with-db]"
 echo "  • Status: ./status-keycloak.sh"
 echo "  • Setup: ./setup-keycloak.sh"
 echo "  • Test: ./test-token.sh"
+echo ""
+echo "  Note: Use --with-db flag to also stop/restart PostgreSQL"
 echo ""
