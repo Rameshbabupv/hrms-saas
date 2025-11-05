@@ -106,8 +106,8 @@ public class KeycloakAdminService {
             user.setEmail(email);
             user.setFirstName(firstName);
             user.setLastName(lastName);
-            user.setEnabled(false);  // Disabled until email verified
-            user.setEmailVerified(false);
+            user.setEnabled(true);  // Enabled - Keycloak handles email verification
+            user.setEmailVerified(false);  // Require email verification
 
             // Set custom attributes for multi-tenancy
             user.setAttributes(Map.of(
@@ -184,6 +184,24 @@ public class KeycloakAdminService {
         } catch (Exception e) {
             log.error("Failed to send verification email: {}", e.getMessage(), e);
             throw new KeycloakIntegrationException("Failed to send verification email", e);
+        }
+    }
+
+    /**
+     * Check if user exists by email
+     *
+     * @param email user email
+     * @return true if user exists in Keycloak
+     */
+    public boolean userExistsByEmail(String email) {
+        log.debug("Checking if Keycloak user exists: {}", email);
+        try {
+            List<UserRepresentation> users = realmResource.users()
+                .search(email, true);
+            return !users.isEmpty();
+        } catch (Exception e) {
+            log.error("Failed to check user existence: {}", e.getMessage(), e);
+            return false;
         }
     }
 

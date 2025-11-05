@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -66,13 +68,42 @@ public class SecurityConfig {
 
             // OAuth2 Resource Server (JWT)
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> {
-                    // JWT validation happens automatically via application.yml
-                    // issuer-uri and jwk-set-uri are configured
-                })
+                .jwt(jwt -> jwt
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                )
             );
 
         return http.build();
+    }
+
+    /**
+     * JWT Authentication Converter - Maps Keycloak roles to Spring Security authorities
+     *
+     * Extracts roles from JWT token's "realm_access.roles" claim and converts them
+     * to Spring Security authorities with "ROLE_" prefix.
+     *
+     * Example:
+     * - JWT claim: "realm_access.roles": ["company_admin", "employee"]
+     * - Spring authorities: ["ROLE_company_admin", "ROLE_employee"]
+     *
+     * This enables @PreAuthorize("hasRole('company_admin')") annotations
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+        // Configure authorities converter for Keycloak roles
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+
+        // Extract roles from "realm_access.roles" claim in JWT
+        authoritiesConverter.setAuthoritiesClaimName("realm_access.roles");
+
+        // Add "ROLE_" prefix to match Spring Security conventions
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+
+        return converter;
     }
 
     /**

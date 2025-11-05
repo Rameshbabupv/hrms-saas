@@ -94,4 +94,22 @@ public interface CompanyRepository extends JpaRepository<CompanyMaster, String> 
      */
     @Query("SELECT c FROM CompanyMaster c WHERE LOWER(c.companyName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<CompanyMaster> searchByName(@Param("name") String name);
+
+    /**
+     * Find company by exact company name (case-insensitive)
+     *
+     * @param companyName company name
+     * @return Optional containing company if found
+     */
+    @Query("SELECT c FROM CompanyMaster c WHERE LOWER(c.companyName) = LOWER(:companyName)")
+    Optional<CompanyMaster> findByCompanyNameIgnoreCase(@Param("companyName") String companyName);
+
+    /**
+     * Check if company name already exists (case-insensitive)
+     *
+     * @param companyName company name
+     * @return true if company name exists
+     */
+    @Query("SELECT COUNT(c) > 0 FROM CompanyMaster c WHERE LOWER(c.companyName) = LOWER(:companyName)")
+    boolean existsByCompanyNameIgnoreCase(@Param("companyName") String companyName);
 }

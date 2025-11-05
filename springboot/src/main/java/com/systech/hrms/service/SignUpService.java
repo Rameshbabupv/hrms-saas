@@ -3,6 +3,7 @@ package com.systech.hrms.service;
 import com.systech.hrms.dto.auth.SignUpRequest;
 import com.systech.hrms.dto.auth.SignUpResponse;
 import com.systech.hrms.entity.CompanyMaster;
+import com.systech.hrms.exception.CompanyNameAlreadyExistsException;
 import com.systech.hrms.exception.EmailAlreadyExistsException;
 import com.systech.hrms.exception.KeycloakIntegrationException;
 import com.systech.hrms.repository.CompanyRepository;
@@ -48,9 +49,31 @@ public class SignUpService {
     public SignUpResponse createCustomer(SignUpRequest request) {
         log.info("Starting customer creation for: {}", request.getEmail());
 
-        // Step 1: Check email uniqueness
+        // Step 1: Check email uniqueness in PostgreSQL
         if (emailExists(request.getEmail())) {
+            log.warn("Email already exists in database: {}", request.getEmail());
             throw new EmailAlreadyExistsException("Email address already exists: " + request.getEmail());
+        }
+
+        // Step 1.1: Check email uniqueness in Keycloak
+        if (keycloakAdminService.userExistsByEmail(request.getEmail())) {
+            log.warn("Email already exists in Keycloak: {}", request.getEmail());
+            throw new EmailAlreadyExistsException("Email address already exists: " + request.getEmail());
+        }
+
+        // Step 1.2: Check company name uniqueness
+        if (companyNameExists(request.getCompanyName())) {
+            CompanyMaster existingCompany = companyRepository
+                .findByCompanyNameIgnoreCase(request.getCompanyName())
+                .orElseThrow();
+
+            log.warn("Company name already exists: {} (admin: {})",
+                request.getCompanyName(), existingCompany.getEmail());
+
+            throw new CompanyNameAlreadyExistsException(
+                request.getCompanyName(),
+                existingCompany.getEmail()
+            );
         }
 
         // Step 2: Generate unique NanoID for tenant_id
@@ -157,9 +180,16 @@ public class SignUpService {
     }
 
     /**
-     * Check if email exists
+     * Check if email exists in PostgreSQL
      */
     public boolean emailExists(String email) {
         return companyRepository.existsByEmail(email);
+    }
+
+    /**
+     * Check if company name exists (case-insensitive)
+     */
+    public boolean companyNameExists(String companyName) {
+        return companyRepository.existsByCompanyNameIgnoreCase(companyName);
     }
 }

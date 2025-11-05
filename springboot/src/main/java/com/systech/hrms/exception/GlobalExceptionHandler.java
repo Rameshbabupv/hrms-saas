@@ -39,6 +39,22 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle company name already exists exception
+     */
+    @ExceptionHandler(CompanyNameAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleCompanyNameExists(CompanyNameAlreadyExistsException e) {
+        log.warn("Company name already exists: {}", e.getCompanyName());
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of(
+                "error", "COMPANY_EXISTS",
+                "message", e.getMessage(),
+                "companyName", e.getCompanyName(),
+                "adminEmail", e.getAdminEmail()
+            ));
+    }
+
+    /**
      * Handle Keycloak integration errors
      */
     @ExceptionHandler(KeycloakIntegrationException.class)
