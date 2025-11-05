@@ -1,14 +1,50 @@
-# HRMS SaaS CLI Tools
+# HRMS SaaS Scripts
 
-Command-line tools for testing and managing the HRMS SaaS system.
+Command-line tools and test scripts for the HRMS SaaS system.
 
 ---
 
 ## 📋 Prerequisites
 
-- Python 3.7 or higher
+- Python 3.7 or higher (for Python scripts)
 - Spring Boot application running on `http://localhost:8081`
 - Keycloak running on `http://localhost:8090`
+- `jq` installed (for JSON parsing in bash scripts)
+- `curl` installed (for API testing)
+
+---
+
+## 📂 Available Scripts
+
+### 1. test-domain-validation.sh
+**Type**: Bash test script
+**Purpose**: Automated testing for domain validation feature
+
+**Usage**:
+```bash
+cd springboot
+./scripts/test-domain-validation.sh
+```
+
+**What it tests**:
+- ✅ Public domain validation (gmail.com, yahoo.com, etc.)
+- ✅ Corporate domain locking (first signup locks domain)
+- ✅ Domain isolation (second signup blocked)
+- ✅ Case insensitive checks (GMAIL.com = gmail.com)
+- ✅ Signup flows with public and corporate emails
+- ✅ Email already exists checks
+
+**Requirements**:
+- Spring Boot running on port 8081
+- PostgreSQL with V2 migration applied
+
+**Output**: Color-coded test results with pass/fail indicators
+
+---
+
+### 2. signup_user.py
+**Type**: Python CLI tool
+**Purpose**: Interactive user signup with Keycloak integration
 
 ---
 
