@@ -60,6 +60,9 @@ export class KeycloakAuthService {
         onLoad: 'check-sso',
         checkLoginIframe: false,
         pkceMethod: 'S256', // Use PKCE for security
+        // Handle auth code callback from Keycloak redirect
+        // This will automatically exchange the code for tokens
+        flow: 'standard',
       });
 
       this.initialized = true;

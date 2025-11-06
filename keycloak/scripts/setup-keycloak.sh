@@ -214,7 +214,7 @@ create_client() {
             "http://localhost:3001",
             "+"
         ],
-        "publicClient": false,
+        "publicClient": true,
         "protocol": "openid-connect",
         "standardFlowEnabled": true,
         "implicitFlowEnabled": false,

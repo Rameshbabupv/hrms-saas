@@ -108,7 +108,7 @@ export const SignUp: React.FC = () => {
 
       console.log('Sign-up successful:', response);
 
-      // Navigate to email verification page
+      // Navigate to email verification page or login
       if (response.requiresEmailVerification) {
         navigate('/email-verification', {
           state: {
@@ -118,8 +118,10 @@ export const SignUp: React.FC = () => {
           }
         });
       } else {
-        // If email verification is not required, redirect to login
-        navigate('/', { state: { message: 'Account created successfully. Please sign in.' } });
+        // If email verification is not required, show success message and redirect to login
+        // User will need to sign in with Keycloak to access the dashboard
+        alert('✅ Account created successfully! Please sign in with your new credentials.');
+        navigate('/');
       }
     } catch (err: any) {
       setError(err.message || 'Sign-up failed. Please try again.');

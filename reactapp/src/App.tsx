@@ -17,7 +17,7 @@ import './App.css';
  */
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, error } = useAuth();
+  const { login, error, isAuthenticated, user } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
 
   const handleLogin = async () => {
@@ -33,6 +33,40 @@ const LoginPage: React.FC = () => {
     navigate('/signup');
   };
 
+  const handleGoToDashboard = () => {
+    navigate('/');
+  };
+
+  // If user is already authenticated, show different UI
+  if (isAuthenticated) {
+    return (
+      <div style={styles.loginContainer}>
+        <div style={styles.loginCard}>
+          <h1 style={styles.loginTitle}>✅ Already Logged In</h1>
+          <p style={styles.loginSubtitle}>Welcome back, {user?.firstName}!</p>
+
+          <div style={styles.alreadyLoggedInMessage}>
+            <p>You are already logged in to the HRMS SaaS Platform.</p>
+            <p>Click the button below to go to your dashboard.</p>
+          </div>
+
+          <button onClick={handleGoToDashboard} style={styles.loginButton}>
+            📊 Go to Dashboard
+          </button>
+
+          <div style={{...styles.configInfo, marginTop: '24px'}}>
+            <small>
+              <strong>Logged in as:</strong> {user?.email}<br />
+              <strong>Company:</strong> {user?.companyId || 'N/A'}<br />
+              <strong>Role:</strong> {user?.userType}
+            </small>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default login page for unauthenticated users
   return (
     <div style={styles.loginContainer}>
       <div style={styles.loginCard}>
@@ -198,9 +232,43 @@ const AppContent: React.FC = () => {
 
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/email-verification" element={<EmailVerification />} />
+      {/* Public routes - redirect to dashboard if already authenticated */}
+      <Route
+        path="/signup"
+        element={
+          isAuthenticated ? (
+            <div style={styles.app}>
+              <Header />
+              <main style={styles.main}>
+                <Dashboard />
+              </main>
+              <footer style={styles.footer}>
+                <p>© 2025 HRMS SaaS Platform - Multi-Tenant HRMS Solution</p>
+              </footer>
+            </div>
+          ) : (
+            <SignUp />
+          )
+        }
+      />
+      <Route
+        path="/email-verification"
+        element={
+          isAuthenticated ? (
+            <div style={styles.app}>
+              <Header />
+              <main style={styles.main}>
+                <Dashboard />
+              </main>
+              <footer style={styles.footer}>
+                <p>© 2025 HRMS SaaS Platform - Multi-Tenant HRMS Solution</p>
+              </footer>
+            </div>
+          ) : (
+            <EmailVerification />
+          )
+        }
+      />
 
       {/* Protected routes */}
       {isAuthenticated ? (
@@ -349,6 +417,17 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '13px',
     color: '#666',
     margin: 0,
+  },
+  alreadyLoggedInMessage: {
+    textAlign: 'center',
+    padding: '24px',
+    background: '#e8f5e9',
+    borderRadius: '12px',
+    marginBottom: '24px',
+    border: '2px solid #4caf50',
+    color: '#2e7d32',
+    fontSize: '15px',
+    lineHeight: '1.6',
   },
   configInfo: {
     marginTop: '24px',

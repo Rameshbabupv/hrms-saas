@@ -8,15 +8,18 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { signupService } from '../../services/signup.service';
+import { useAuth } from '../../contexts/AuthContext';
 
 export const EmailVerification: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { login } = useAuth();
   const email = (location.state as any)?.email || '';
 
   const [resending, setResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   const [resendError, setResendError] = useState<string | null>(null);
+  const [loggingIn, setLoggingIn] = useState(false);
 
   const handleResendEmail = async () => {
     if (!email) {
@@ -43,6 +46,21 @@ export const EmailVerification: React.FC = () => {
 
   const handleBackToLogin = () => {
     navigate('/');
+  };
+
+  const handleContinueToLogin = async () => {
+    try {
+      setLoggingIn(true);
+      await login();
+      // Keycloak will redirect to root (/) after successful authentication
+      // App.tsx routing logic will automatically show the dashboard when isAuthenticated becomes true
+    } catch (error) {
+      console.error('Login failed:', error);
+      // If login fails, redirect to login page
+      navigate('/');
+    } finally {
+      setLoggingIn(false);
+    }
   };
 
   return (
@@ -76,7 +94,7 @@ export const EmailVerification: React.FC = () => {
               Your account will be activated automatically
             </li>
             <li style={styles.instructionItem}>
-              Return to the login page and sign in
+              Click the "Continue to Login" button below to sign in
             </li>
           </ol>
         </div>
@@ -119,10 +137,20 @@ export const EmailVerification: React.FC = () => {
           </ul>
         </div>
 
-        {/* Back to login */}
+        {/* Action buttons */}
         <div style={styles.footer}>
+          <button
+            onClick={handleContinueToLogin}
+            disabled={loggingIn}
+            style={{
+              ...styles.primaryButton,
+              ...(loggingIn ? styles.buttonDisabled : {}),
+            }}
+          >
+            {loggingIn ? 'Redirecting to Login...' : '🔑 Continue to Login'}
+          </button>
           <button onClick={handleBackToLogin} style={styles.backButton}>
-            ← Back to Login
+            ← Back to Login Page
           </button>
         </div>
       </div>
@@ -263,6 +291,21 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   footer: {
     textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  },
+  primaryButton: {
+    width: '100%',
+    padding: '14px 24px',
+    fontSize: '16px',
+    fontWeight: '600',
+    color: 'white',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    border: 'none',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    transition: 'transform 0.2s',
   },
   backButton: {
     padding: '12px 24px',
